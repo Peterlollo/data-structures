@@ -3,6 +3,7 @@
 // ------------------------
 // Instantiate a new graph
 var Graph = function() {
+  this.edgeContainer = [];
 
 };
 
@@ -37,11 +38,19 @@ Graph.prototype.removeNode = function(node) {
 // ------------------------
 // Returns a boolean indicating whether two specified nodes are connected.  Pass in the values contained in each of the two nodes.
 Graph.prototype.hasEdge = function(fromNode, toNode) {
+  var edgeExists = false;
+  _.each(this.edgeContainer, function(edgePair){
+    if((edgePair[0] === fromNode && edgePair[1] === toNode) || (edgePair[0] === toNode && edgePair[1] === fromNode)){
+      edgeExists = true;
+    }
+  });
+  return edgeExists;
 };
 
 // ------------------------
 // Connects two nodes in a graph by adding an edge between them.
 Graph.prototype.addEdge = function(fromNode, toNode) {
+  this.edgeContainer.push([fromNode, toNode]);
 };
 
 // ------------------------
