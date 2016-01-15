@@ -10,7 +10,7 @@ var Graph = function() {
 // ------------------------
 // Add a node to the graph, passing in the node's value.
 Graph.prototype.addNode = function(node) {
-  this.node = node;
+  this[node] = node;
 };
 
 // ------------------------
@@ -56,11 +56,25 @@ Graph.prototype.addEdge = function(fromNode, toNode) {
 // ------------------------
 // Remove an edge between any two specified (by value) nodes.
 Graph.prototype.removeEdge = function(fromNode, toNode) {
+  this.edgeContainer.splice(_.indexOf([fromNode, toNode]),1);
 };
 
 // ------------------------
 // Pass in a callback which will be executed on each node of the graph.
 Graph.prototype.forEachNode = function(cb) {
+  // _.each(this, function(eachNode){
+  //   if(typeof this[key] !== 'function' && key !== 'edgeContainer'){
+  //     cb(eachNode);
+  //   }
+  // });
+
+  for(var key in this) {
+    console.log("keys ", key);
+    if(typeof this[key] !== 'function' && key !== 'edgeContainer') {
+      console.log("Keys which are not functions: ", key);
+      this[key] = cb(this[key]);
+    }
+  }
 };
 
 /*
