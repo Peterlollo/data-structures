@@ -17,11 +17,13 @@ var LimitedArray = function(limit) {
   var limitedArray = {};
   limitedArray.get = function(index) {
     checkLimit(index);
+    // console.log("what we're looking for", storage[index])
     return storage[index];
   };
   limitedArray.set = function(index, value) {
     checkLimit(index);
     storage[index] = value;
+    // console.log("limtedarray", storage);
   };
   limitedArray.each = function(callback) {
     for (var i = 0; i < storage.length; i++) {
