@@ -3,21 +3,35 @@
 // ------------------------
 // Instantiate a new graph
 var Graph = function() {
+
 };
 
 // ------------------------
 // Add a node to the graph, passing in the node's value.
 Graph.prototype.addNode = function(node) {
+  this.node = node;
 };
 
 // ------------------------
 // Return a boolean value indicating if the value passed to contains is represented in the graph.
 Graph.prototype.contains = function(node) {
+  var result = false;
+  for(var key in this) {
+    if(this[key] === node) {
+      result = true;
+    }
+  }
+  return result;
 };
 
 // ------------------------
 // Removes a node from the graph.
 Graph.prototype.removeNode = function(node) {
+  for(var key in this) {
+    if(this[key] === node) {
+      delete this[key];
+    } 
+  }
 };
 
 // ------------------------
