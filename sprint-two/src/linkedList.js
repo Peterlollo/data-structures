@@ -2,16 +2,15 @@ var LinkedList = function() {
   var list = {};
   list.head = null;
   list.tail = null; 
-  // var counter = 0;
+  
   list.addToTail = function(value) {
-    if(list.tail === null) {
-       list.head = Node(value);
+    var newTail = Node(value);
+    if(list.head === null) {
+      list.head = newTail;
+      list.tail = newTail;
     }
-    list.tail = Node(value);
-    if(list.head !== null ) {
-      list.head.next = list.tail;
-    }
-     
+    list.tail.next = newTail;
+    list.tail = newTail;
   };
 
   list.removeHead = function() {
