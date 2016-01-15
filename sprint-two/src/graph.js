@@ -69,9 +69,9 @@ Graph.prototype.forEachNode = function(cb) {
   // });
 
   for(var key in this) {
-    console.log("keys ", key);
+    // console.log("keys ", key);
     if(typeof this[key] !== 'function' && key !== 'edgeContainer') {
-      console.log("Keys which are not functions: ", key);
+      // console.log("Keys which are not functions: ", key);
       this[key] = cb(this[key]);
     }
   }
