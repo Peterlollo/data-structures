@@ -3,9 +3,11 @@
 var HashTable = function() {
   this._limit = 8;
   this._storage = LimitedArray(this._limit);
+  this._tupleCount = 0;
 };
 
 HashTable.prototype.insert = function(k, v) {
+  this._tupleCount++;
   var index = getIndexBelowMaxForKey(k, this._limit);
   // console.log("index", index);
   if(this._storage.get(index) === undefined){
@@ -44,6 +46,7 @@ HashTable.prototype.remove = function(k) {
   var bucket = this._storage.get(index);
   for(var i = 0; i < bucket.length; i ++) {
     if(bucket[i][0] === k) {
+      this._tupleCount--;
       bucket.splice(i, 1);
     }
   }
