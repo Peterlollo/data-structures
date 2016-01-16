@@ -4,78 +4,75 @@ var HashTable = function() {
   this._limit = 8;
   this._storage = LimitedArray(this._limit);
   //Reassign tempStorage to the old limitedArray(makes it easier to reassign)
-  this._tempStorage = this._storage;
+  this._tempStorage = undefined;
   this._tupleCount = 0;
 };
 
+
 HashTable.prototype.insert = function(k, v) {
-  this._tupleCount++;
-  if((this._tupleCount/this._limit) > 0.75) {
-    //Double the limit
-    this._limit = this._limit*2;
-    //Overwrite the old storage by rehashing now that there is a new limit!
-      this._storage.each(function(bucket, bucketIndex){
-        for(var i = 0; i < bucket.length; i++) {
-          //Yet to figure out this bit 
-          this._tempStorage.insert();
-
-        }
-      });
-    }
-
   var index = getIndexBelowMaxForKey(k, this._limit);
-  // console.log("index", index);
-  if(this._storage.get(index) === undefined){
-    this._storage.set(index, []);
-    }
-    var bucket = this._storage.get(index);
-    var alreadyInBucket = false;
-    for(var i = 0; i < bucket.length; i++) {
-      if(bucket[i][0] === k) {
-        bucket[i][1] = v;
-        alreadyInBucket = true;
+  var bucket = this._storage.get(index) || [];
+
+    for(var m = 0; m < bucket.length; m++) {
+      if(bucket[m][0] === k) {
+        bucket[m][1] = v;
+        return;
       }
     }
-    if(!alreadyInBucket){
-     bucket.push([k,v]);
-    }
+    bucket.push([k,v]);
+    this._storage.set(index, bucket);
+    this._tupleCount++;
 
-  
+  //call the resize function here  
+  if((this._tupleCount/this._limit) > 0.75){
+  this.resize(this._limit*2);
+  } 
 };
 
 HashTable.prototype.retrieve = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-    var bucket = this._storage.get(index);
+    var bucket = this._storage.get(index) || [];
       for(var i = 0; i < bucket.length; i ++) {
         if(bucket[i][0] === k) {
           return bucket[i][1];
-        }
+        } 
       }
-
-
-
+      return undefined;
 };
-
-//If the tuple count divided by the limit is greater than 0.75:
-      //Initiate a new limitedArray with a higher limit
-        //Re hash every item from the old limitedArray into the new limitedArray!
-          //Reset this._storage to that var once you're done!
-          //Delete old hash table using the old limit to identify it(store old limit in a var!!?) 
-//
 
 HashTable.prototype.remove = function(k) {
   var index = getIndexBelowMaxForKey(k, this._limit);
-  var bucket = this._storage.get(index);
+  var bucket = this._storage.get(index) || [];
   for(var i = 0; i < bucket.length; i ++) {
     if(bucket[i][0] === k) {
+      var deletedTuple = bucket.splice(i, 1);
       this._tupleCount--;
-      bucket.splice(i, 1);
+      if ((this._tupleCount/this._limit) < 0.25){
+        this.resize(Math.floor(this._limit / 2));
+      }
+      return deletedTuple[1];
     }
   }
 
-
+  return undefined;
 };
 
+HashTable.prototype.resize = function(newLimit) {
+  newLimit = Math.max(newLimit, 8);
+    if(newLimit === this._limit) { return; }
+    this._tupleCount = 0;
+    this._limit = newLimit;
+    this._tempStorage = this._storage;
+    this._storage = LimitedArray(this._limit);
+    for(var i = 0; i<this._tempStorage.length; i++) {
+      if(!this._tempStorage[i]) {return;}
+      for(var j = 0; j<this._tempStorage[i].length; j++) {
+        //re-hash each tuple in old storage into the new storage array
+        this._storage.insert(this._tempStorage[i][j][0], this._tempStorage[i][j][1]);
+      }
+    }
+
+};
 
 
 /*
